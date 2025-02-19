@@ -5,7 +5,7 @@ const baseUrl = import.meta.env.VITE_API_URL;
 
 export const groupApi = createApi({
   reducerPath: "groupApi",
-  tagTypes: ["Group"],
+  tagTypes: ["Group", "JoinRequests"],
   baseQuery: fetchBaseQuery({
     baseUrl: baseUrl,
     prepareHeaders: (headers, { getState }) => {
@@ -16,6 +16,7 @@ export const groupApi = createApi({
       return headers;
     },
   }),
+  
   endpoints: (builder) => ({
     getGroups: builder.query<ApiResponse<Group[]>, void>({
       query: () => `/group`,
@@ -25,34 +26,74 @@ export const groupApi = createApi({
       ApiResponse<Group>,
       Omit<Group, "_id" | "active" | "admins" | "members">
     >({
-      query: (body) => {
-        return { url: `/group/`, method: "POST", body };
-      },
+      query: (body) => ({
+        url: `/group/`,
+        method: "POST",
+        body,
+      }),
       invalidatesTags: ["Group"],
     }),
     join: builder.mutation<
       ApiResponse<Group>,
       { groupId: string; userId: string }
     >({
-      query: ({ groupId, userId }) => {
-        console.log("Joining group with ID:", groupId, userId);
-        return {
-          url: `/group/${groupId}/join`,
-          method: "POST",
-          body: { userId: userId },
-        };
-      },
+      query: ({ groupId, userId }) => ({
+        url: `/group/${groupId}/join`,
+        method: "POST",
+        body: { userId },
+      }),
       invalidatesTags: ["Group"],
     }),
     getJoinedGroups: builder.query<ApiResponse<Group[]>, void>({
       query: () => `/group/joined`,
+    }),
+
+    // Request to Join Group
+    requestToJoin: builder.mutation<void, string>({
+      query: (groupId) => ({
+        url: `/group/${groupId}/join-request`,
+        method: "POST",
+      }),
+      invalidatesTags: ["JoinRequests"],
+    }),
+
+    // Approve Join Request
+    approveRequest: builder.mutation<void, { groupId: string; userId: string }>(
+      {
+        query: ({ groupId, userId }) => ({
+          url: `/group/${groupId}/approve/${userId}`,
+          method: "POST",
+        }),
+        invalidatesTags: ["JoinRequests"],
+      }
+    ),
+
+    // Decline Join Request
+    declineRequest: builder.mutation<void, { groupId: string; userId: string }>(
+      {
+        query: ({ groupId, userId }) => ({
+          url: `/group/${groupId}/decline/${userId}`,
+          method: "DELETE",
+        }),
+        invalidatesTags: ["JoinRequests"],
+      }
+    ),
+
+    // Get Join Requests
+    getJoinRequests: builder.query<ApiResponse<User[]>, string>({
+      query: (groupId) => `/group/${groupId}/join-requests`,
+      providesTags: ["JoinRequests"],
     }),
   }),
 });
 
 export const {
   useGetGroupsQuery,
-  useJoinMutation,
   useCreateGroupMutation,
+  useJoinMutation,
   useGetJoinedGroupsQuery,
+  useRequestToJoinMutation,
+  useApproveRequestMutation,
+  useDeclineRequestMutation,
+  useGetJoinRequestsQuery,
 } = groupApi;
