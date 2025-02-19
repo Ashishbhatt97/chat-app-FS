@@ -41,5 +41,13 @@ router.put(
   catchError,
   groupController.removeAdmin
 );
+router.post('/:id/join-request' , catchError, groupController.requestToJoin);
+router.post('/:id/approve' , catchError, groupController.approveRequest);
+router.delete('/:id/decline', catchError, groupController.declineRequest);
+router.get('/:id/join-requests', catchError, groupController.getJoinRequests);
+
+
+
+
 
 export default router;

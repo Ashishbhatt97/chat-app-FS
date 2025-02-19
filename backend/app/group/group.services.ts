@@ -142,3 +142,61 @@ export const getJoinedGroups = async (userId: string) => {
   const groups = await groupSchema.find({ members: userId });
   return groups;
 };
+
+export const requestToJoinGroup = async (groupId: string, userId: string) => {
+  const group = await groupSchema.findById(groupId);
+  if (!group) throw new Error("Group not found");
+
+  if (group.members.includes(userId)) throw new Error("Already a member");
+
+  if (group.privacy === "PUBLIC") {
+    group.members.push(userId);
+    await group.save();
+    return { message: "Joined group successfully" };
+  }
+
+  if (group.joinRequests.includes(userId)) throw new Error("Already requested");
+
+  group.joinRequests.push(userId);
+  await group.save();
+  return { message: "Request sent to admin" };
+};
+
+
+export const approveJoinRequest = async (groupId: string, adminId: string, userId: string) => {
+  const group = await groupSchema.findById(groupId);
+  if (!group) throw new Error("Group not found");
+
+  if (group.admin.toString() !== adminId) throw new Error("Only admin can approve requests");
+
+  if (!group.joinRequests.includes(userId)) throw new Error("No request found");
+
+  group.members.push(userId);
+  group.joinRequests = group.joinRequests.filter((id) => id.toString() !== userId);
+  await group.save();
+  return { message: "User added to group" };
+};
+
+
+export const declineJoinRequest = async (groupId: string, adminId: string, userId: string) => {
+  const group = await groupSchema.findById(groupId);
+  if (!group) throw new Error("Group not found");
+
+  if (group.admin.toString() !== adminId) throw new Error("Only admin can decline requests");
+
+  if (!group.joinRequests.includes(userId)) throw new Error("No request found");
+
+  group.joinRequests = group.joinRequests.filter((id) => id.toString() !== userId);
+  await group.save();
+  return { message: "Request declined" };
+};
+
+
+export const getPendingJoinRequests = async (groupId: string, adminId: string) => {
+  const group = await groupSchema.findById(groupId).populate("joinRequests", "name email");
+  if (!group) throw new Error("Group not found");
+
+  if (group.admin.toString() !== adminId) throw new Error("Only admin can view requests");
+
+  return group.joinRequests;
+};

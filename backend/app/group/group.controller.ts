@@ -1,17 +1,17 @@
-import asyncHandler from "express-async-handler";
 import { type Request, type Response } from "express";
-import * as groupServices from "./group.services";
+import asyncHandler from "express-async-handler";
 import { createResponse } from "../common/helper/response.hepler";
+import * as groupServices from "./group.services";
 
 export const getAllGroup = asyncHandler(async (req: Request, res: Response) => {
   const result = await groupServices.getAllGroup();
-  res.send(createResponse(result));
+  res.send(createResponse(result, "Groups fetched successfully"));
 });
 
 export const getGroupById = asyncHandler(
   async (req: Request, res: Response) => {
     const result = await groupServices.getGroupById(req.params.id);
-    res.send(createResponse(result));
+    res.send(createResponse(result, "Group fetched successfully"));
   }
 );
 
@@ -70,3 +70,23 @@ export const getJoinedGroups = asyncHandler(
     res.send(createResponse(result));
   }
 );
+
+export const requestToJoin = asyncHandler(async (req: Request, res: Response) => {
+  const result = await groupServices.requestToJoinGroup(req.params.id, req.user.id);
+  res.send(createResponse(result, "Request sent successfully"));
+});
+
+export const approveRequest = asyncHandler(async (req: Request, res: Response) => {
+  const result = await groupServices.approveJoinRequest(req.params.id, req.user.id, req.params.userId);
+  res.send(createResponse(result, "Request approved successfully"));
+});
+
+export const declineRequest = asyncHandler(async (req: Request, res: Response) => {
+  const result = await groupServices.declineJoinRequest(req.params.id, req.user.id, req.params.userId);
+  res.send(createResponse(result, "Request declined"));
+});
+
+export const getJoinRequests = asyncHandler(async (req: Request, res: Response) => {
+  const result = await groupServices.getPendingJoinRequests(req.params.id, req.user?.id!);
+  res.send(createResponse(result, "Request fetched successfully"));
+});
