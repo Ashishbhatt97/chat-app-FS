@@ -1,27 +1,69 @@
-# Backend Project
+# Backend API - Group Chat Application
 
-This is a Node.js backend project built with TypeScript. Below are instructions for setup, scripts, and usage.
+## 📌 Project Overview
+This is the backend service for the Group Chat Application, providing APIs for user authentication, group management, and real-time messaging. Built with **Node.js**, **Express**, and **MongoDB**, it follows a modular architecture with separate layers for routes, controllers, and services.
 
-## Features
-- TypeScript for strongly typed development.
-- ESLint & Prettier for linting and code formatting.
-- Nodemon for development with auto-restarts.
-- Support for local, development, and production environments.
+## 🚀 Features
+- **User Authentication** (JWT-based login & registration)
+- **Group Management** (Create, Join)
+- **Messaging** (Send & Retrieve Messages in Groups)
+- **Role-based Access Control** (Admin & User Permissions)
+- **Database Integration** (MongoDB with Mongoose ORM)
+- **Error Handling & Validations**
 
-## Prerequisites
+---
 
-Before you begin, ensure that you have the following installed:
+## 🏗 Tech Stack
+- **Backend**: Node.js, Express.js
+- **Database**: MongoDB, Mongoose
+- **Authentication**: JWT (JSON Web Tokens)
+- **Real-Time Communication**: WebSockets (Future Implementation)
+- **Validation**: Express-validator
 
-- **Node.js** (v18.x or higher)
-  - Download and install Node.js from [here](https://nodejs.org/).
-  
-- **MongoDB** (locally or via a cloud service like MongoDB Atlas)
-  - If using MongoDB locally, download and install from [here](https://www.mongodb.com/try/download/community).
-  - Alternatively, use [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) for a cloud instance.
+---
 
+## 📂 Project Structure
+```plaintext
+backend/
+│── src/
+│   ├── controllers/        # Business logic for each route
+│   ├── models/             # Mongoose schemas & models
+│   ├── routes/             # Express routes
+│   ├── services/           # Reusable service functions
+│   ├── middlewares/        # Authentication & error handling
+│   ├── config/             # Environment variables & DB connection
+│── .env                    # Environment variables
+│── package.json            # Dependencies & scripts
+│── README.md               # Project documentation
+```
 
-## Installation
-git clone git@github.com:lokesh75way/user-basic-auth.git && cd backend && npm install
+---
+
+## 🛠 Installation & Setup
+### 1️⃣ Prerequisites
+- **Node.js** v16+
+- **MongoDB** (local or cloud instance)
+
+### 2️⃣ Clone the Repository
+```sh
+git clone https://github.com/your-repo/group-chat-backend.git
+cd backend
+```
+
+### 3️⃣ Install Dependencies
+```sh
+npm install --legacy-peer-deps
+```
+
+### 4️⃣ Configure Environment Variables
+Create a `.env` file in the root directory and add:
+```env
+PORT = 8000
+JWT_ACCESS_SECRET = "TOP_SECRET"
+JWT_REFRESH_SECRET = "TOP_SECRET"
+MONGODB_URI = "mongodb://localhost:27017/test_db"
+```
+
 
 ## Scripts
 - `npm run local`: Start the server with nodemon for development.
@@ -34,10 +76,4 @@ git clone git@github.com:lokesh75way/user-basic-auth.git && cd backend && npm in
 - `npm run format`: Format code using Prettier.
 - `npm run format:check`: Check code formatting with Prettier.
 
-
-## env vaiables
-
-PORT = 8000
-JWT_ACCESS_SECRET = "TOP_SECRET"
-JWT_REFRESH_SECRET = "TOP_SECRET"
-MONGODB_URI = "mongodb://localhost:27017/test_db"
+---
